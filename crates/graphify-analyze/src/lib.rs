@@ -44,7 +44,7 @@ pub fn god_nodes(graph: &KnowledgeGraph, top_n: usize) -> Vec<GodNode> {
         })
         .collect();
 
-    candidates.sort_by(|a, b| b.degree.cmp(&a.degree));
+    candidates.sort_by_key(|b| std::cmp::Reverse(b.degree));
     candidates.truncate(top_n);
     debug!("found {} god node candidates", candidates.len());
     candidates
@@ -502,10 +502,10 @@ fn is_concept_node(graph: &KnowledgeGraph, node_id: &str) -> bool {
             return true;
         }
         let parts: Vec<&str> = node.source_file.split('/').collect();
-        if let Some(last) = parts.last() {
-            if !last.contains('.') {
-                return true;
-            }
+        if let Some(last) = parts.last()
+            && !last.contains('.')
+        {
+            return true;
         }
     }
     false
@@ -834,7 +834,7 @@ mod tests {
     use super::*;
     use graphify_core::confidence::Confidence;
     use graphify_core::graph::KnowledgeGraph;
-    use graphify_core::id::make_id;
+
     use graphify_core::model::{GraphEdge, GraphNode, NodeType};
     use std::collections::HashMap as StdHashMap;
 
